@@ -11,7 +11,7 @@ class TestTextNode(unittest.TestCase):
     def test_eq(self):
         """Test the __eq__ function"""
         self.assertEqual(self.node, self.node2)
-
+    
     def test_urlisNone(self):
         """Check if the url is really None"""
         self.assertIsNone(self.node.url)
@@ -31,6 +31,12 @@ class TestTextNode(unittest.TestCase):
         """Check if the text is different from each other"""
         self.node2.text = "This is a test"
         self.assertNotEqual(self.node, self.node2)
+    
+    def test_repr(self):
+        self.node = TextNode("This is a text node", TextType.TEXT, "https://www.boot.dev")
+        self.assertEqual(
+            "TextNode(This is a text node, text, https://www.boot.dev)", repr(self.node)
+        )
     
 
 
