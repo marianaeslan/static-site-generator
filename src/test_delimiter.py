@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from delimiter import split_nodes_delimiter
+from delimiter import split_nodes_delimiter,extract_markdown_images, extract_markdown_links
 
 class TestDelimiter(unittest.TestCase):
     def setUp(self):
@@ -37,7 +37,7 @@ class TestDelimiter(unittest.TestCase):
                 TextNode("italic", TextType.ITALIC),
                 TextNode(" word", TextType.TEXT),
             ],
-            self.new_italic_node
+            self.new_italic_node,
         )
     
     def test_double_bold(self):
@@ -71,6 +71,19 @@ class TestDelimiter(unittest.TestCase):
             self.new_code_node,
         )
 
+class TestExtractor(unittest.TestCase):
+    def setUp(self):
+        self.text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.text_match = extract_markdown_images(self.text)
+
+        self.text_2 = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        self.text_match_2 = extract_markdown_links(self.text_2)
+
+    def test_altText_links(self):
+        self.assertEqual(self.text_match, [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")])
+
+    def test_anchor_url(self):
+        self.assertEqual(self.text_match_2, [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")])
 
 if __name__ == "__main__":
     unittest.main()
