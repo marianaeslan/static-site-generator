@@ -55,7 +55,9 @@ def split_nodes_image(old_nodes):
                 new_nodes.append(TextNode(sections[0], TextType.TEXT))
             new_nodes.append(TextNode(alt, TextType.IMAGE, url))
             if sections[1]:
-                new_nodes.append(TextNode(sections[1], TextType.TEXT))
+                node_t = TextNode(sections[1], TextType.TEXT)
+                t_nodes = split_nodes_image([node_t])
+                new_nodes.extend(t_nodes)
     return new_nodes
 
 def split_nodes_link(old_nodes):

@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from delimiter import split_nodes_delimiter,extract_markdown_images, extract_markdown_links
+from delimiter import *
 
 class TestDelimiter(unittest.TestCase):
     def setUp(self):
@@ -84,6 +84,75 @@ class TestExtractor(unittest.TestCase):
 
     def test_anchor_url(self):
         self.assertEqual(self.text_match_2, [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")])
+
+class TestSplit(unittest.TestCase):
+    def setUp(self):
+        self.node_link = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        self.new_nodes_link = split_nodes_link([self.node_link])
+
+        self.node_img = TextNode(
+            "This is text with an image ![example](https://example.com/image.png) and more text.",
+            TextType.TEXT
+        )
+        self.new_nodes_img = split_nodes_image([self.node_img])
+
+        self.node_mult_img = TextNode(
+            "Here is ![image1](https://example.com/image1.png) and ![image2](https://example.com/image2.png)",
+            TextType.TEXT
+        )
+        self.nodes_mult_imgs = split_nodes_image([self.node_mult_img])
+        
+        self.node_mult_link = TextNode(
+            "Check [Google](https://www.google.com) and [GitHub](https://github.com)",
+            TextType.TEXT
+        )
+        self.nodes_mult_links = split_nodes_link([self.node_mult_link])
+        
+
+    def test_splitLinks(self):
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+            ],
+            self.new_nodes_link,
+        )
+
+        self.assertListEqual(
+            [
+                TextNode("Check ", TextType.TEXT),
+                TextNode("Google", TextType.LINK, "https://www.google.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("GitHub", TextType.LINK, "https://github.com"),
+            ],
+            self.nodes_mult_links
+        )
+    
+    def test_splitImages(self):
+        self.assertListEqual(
+            [
+                TextNode("This is text with an image ", TextType.TEXT),
+                TextNode("example", TextType.IMAGE, "https://example.com/image.png"),
+                TextNode(" and more text.", TextType.TEXT),
+            ],
+            self.new_nodes_img
+        )
+
+        self.assertListEqual(
+            [
+                TextNode("Here is ", TextType.TEXT),
+                TextNode("image1", TextType.IMAGE, "https://example.com/image1.png"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("image2", TextType.IMAGE, "https://example.com/image2.png"),
+            ],
+            self.nodes_mult_imgs
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
