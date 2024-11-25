@@ -12,7 +12,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         parts = node.text.split(delimiter)
 
         if len(parts)% 2 == 0:
-           raise ValueError ("Invalid markdown")
+            raise ValueError ("Invalid markdown")
         
         for i in range(len(parts)):
             if parts[i] == "":
@@ -21,10 +21,10 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 split_nodes.append(TextNode(parts[i], TextType.TEXT))
             else:
                 split_nodes.append(TextNode(parts[i], text_type))
-        
+
         new_nodes.extend(split_nodes)
     return new_nodes
-            
+
 def extract_markdown_images(text):
     """Regex pattern that captures alt text and images"""
     img_pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
@@ -37,9 +37,26 @@ def extract_markdown_links(text):
     link_pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     link = re.findall(link_pattern, text)
     return link
-            
 
-    
+def split_nodes_image(old_nodes):
+    new_nodes = []
 
-            
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        images = extract_markdown_images(node.text)
+        if not images:
+            new_nodes.append(node)
+        else:
+            alt, url = images[0]
+            sections = node.text.split(f"![{alt}]({url})", 1)
+            if sections[0]:
+                new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            new_nodes.append(TextNode(alt, TextType.IMAGE, url))
+            if sections[1]:
+                new_nodes.append(TextNode(sections[1], TextType.TEXT))
+    return new_nodes
 
+def split_nodes_link(old_nodes):
+    pass
