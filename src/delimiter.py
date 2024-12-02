@@ -93,15 +93,4 @@ def text_to_textnodes(text):
     return link
     
 
-def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n\n")
-    clean_blocks = []
-    for block in blocks:
-        block_lines = block.split("\n")
-        cleaned_lines = [line.strip() for line in block_lines]
-        cleaned_block = "\n".join(cleaned_lines)
-        if cleaned_block:
-            clean_blocks.append(cleaned_block.strip())
-    
-    return clean_blocks
 
