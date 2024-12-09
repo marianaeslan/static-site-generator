@@ -1,6 +1,6 @@
 from htmlnode import ParentNode
 from delimiter import text_to_textnodes
-from txt_to_html import text_node_to_html_node
+from textnode import text_node_to_html_node
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
