@@ -1,9 +1,9 @@
 class HTMLNode:
-    def __init__(self, tag=None, value=None, children=None, props={}):
+    def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
         self.value = value
         self.children = children
-        self.props = props
+        self.props = props if props is not None else {}
 
     def to_html(self):
         raise NotImplementedError ("to_html method not implemented")
@@ -21,7 +21,7 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag, value, props={}):
+    def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
@@ -35,7 +35,7 @@ class LeafNode(HTMLNode):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
         
 class ParentNode(HTMLNode):
-    def __init__(self,tag, children, props = {}):
+    def __init__(self,tag, children, props=None):
         super().__init__(tag, None, children, props)
 
 
